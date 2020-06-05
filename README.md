@@ -37,7 +37,7 @@ $ sudo systemctl restart docker
 
 <br>
 
-Check the default runtime setting
+Check the default runtime setting. If you get the following output, you have succeeded.
 ```
 $ docker info 2> /dev/null | grep -i runtime
 >>> Runtimes: nvidia runc
