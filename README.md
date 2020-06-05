@@ -14,7 +14,7 @@ Docker Image and Path to Dockerfile
 <br>
 
 ## Docker Default Runtime
-To enable access to the CUDA compiler (nvcc) during docker build operations, add "default-runtime": "nvidia" to your `/etc/docker/daemon.json` configuration file before attempting to build the containers:
+When building `taikiinoue45/jetson:torch`, you have to enable access to the CUDA compiler (nvcc). However, `docker build` doesn't support the runtime option ([this is a much-needed feature](https://github.com/NVIDIA/nvidia-docker/issues/595)), and so you have to change the default runtime setting by adding "default-runtime": "nvidia" to your `/etc/docker/daemon.json`.
 ```
 {
     "runtimes": {
@@ -28,7 +28,18 @@ To enable access to the CUDA compiler (nvcc) during docker build operations, add
 }
 ```
 
-You will then want to restart the Docker service or reboot your system before proceeding.
+<br>
+
+Reboot your docker deamon
 ```
-sudo systemctl restart docker
+$ sudo systemctl restart docker
+```
+
+<br>
+
+Check the default runtime setting
+```
+$ docker info 2> /dev/null | grep -i runtime
+>>> Runtimes: nvidia runc
+>>> Default Runtime: nvidia
 ```
