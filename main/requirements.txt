@@ -1,0 +1,9 @@
+fastprogress
+matplotlib
+numpy
+pandas
+pillow
+pyyaml
+albumentations
+tensorboard
+tqdm

@@ -24,6 +24,7 @@ RUN set -xe \
             \
             # Non-python dependencies for torchvision (pillow)
             # https://forums.developer.nvidia.com/t/pytorch-for-jetson-nano-version-1-5-0-now-available/72048
+            # https://pillow.readthedocs.io/en/5.1.x/installation.html
             libjpeg-dev \
             zlib1g-dev \
             \
