@@ -23,7 +23,5 @@ RUN set -xe \
         && sed -i 's/get_build_env_var_by_name("headless")/True/g' setup.py \
         && python3 setup.py bdist_wheel \
         && mkdir /root/whl \
-        && cp /root/opencv-python/dist/${OPENCV_WHL} /root/whl/${OPENCV_WHL}
-
-# Verify that the WHL file is working properly
-RUN pip3 install /root/whl/${OPENCV_WHL}
+        && cp /root/opencv-python/dist/${OPENCV_WHL} /root/whl/${OPENCV_WHL} \
+        && pip3 install /root/whl/${OPENCV_WHL}
