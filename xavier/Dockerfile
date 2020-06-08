@@ -78,7 +78,7 @@ RUN set -xe \
 # Install torch2trt
 # https://github.com/TaikiInoue/torch2trt#option-2---with-plugins-experimental
 RUN set -xe \
-        && git clone -b taikiinoue45 git@github.com:TaikiInoue/torch2trt.git \
+        && git clone -b taikiinoue45 https://github.com/TaikiInoue/torch2trt \
         && cd torch2trt \
         && python3 setup.py install --plugins \
         && cd .. \
