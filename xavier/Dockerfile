@@ -8,6 +8,11 @@ FROM nvcr.io/nvidia/l4t-base:r32.4.2
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG en_US.UTF-8
 
+ENV CUDA_VERSION 10.2.89
+ENV CUDA_PKG_VERSION 10-2=$CUDA_VERSION-1
+ENV CUDNN_VERSION 7.6.5.32
+ENV NCCL_VERSION 2.5.6
+
 RUN set -xe \
         && apt-get update \
         && apt-get install -y --no-install-recommends \
@@ -43,21 +48,42 @@ RUN set -xe \
             libjpeg-dev \
             zlib1g-dev \
             \
+            # Non-python dependencies for torch2trt
+            # https://github.com/NVIDIA-AI-IOT/torch2trt#option-2---with-plugins-experimental
+            libprotobuf* \
+            protobuf-compiler \
+            ninja-build
+            \
+        && sudo apt autoremove -y \
+        && sudo apt autoclean -y \
         && rm -rf /var/lib/apt/lists/*
 
 ARG OPENCV_WHL=opencv_python_headless-4.3.0+3073e9e-cp36-cp36m-linux_aarch64.whl
 ARG TORCH_WHL=torch-1.4.0-cp36-cp36m-linux_aarch64.whl
 ARG TORCHVISION_WHL=torchvision-0.5.0a0+85b8fbf-cp36-cp36m-linux_aarch64.whl
-COPY --from=opencv-whl /root/whl/${OPENCV_WHL} /root/whl/${OPENCV_WHL}
-COPY --from=torch-whl /root/whl/${TORCH_WHL} /root/whl/${TORCH_WHL}
-COPY --from=torch-whl /root/whl/${TORCHVISION_WHL} /root/whl/${TORCHVISION_WHL}
+COPY --from=opencv-whl /root/whl/$OPENCV_WHL /root/whl/$OPENCV_WHL
+COPY --from=torch-whl /root/whl/$TORCH_WHL /root/whl/$TORCH_WHL
+COPY --from=torch-whl /root/whl/$TORCHVISION_WHL /root/whl/$TORCHVISION_WHL
 COPY requirements.txt requirements.txt
 
 RUN set -xe \
         && python3 -m pip install --upgrade pip \
         && pip3 install --no-cache-dir wheel setuptools Cython \
-        && pip3 install /root/whl/${OPENCV_WHL} \
-        && pip3 install /root/whl/${TORCH_WHL} \
-        && pip3 install /root/whl/${TORCHVISION_WHL} \
+        && pip3 install /root/whl/$OPENCV_WHL \
+        && pip3 install /root/whl/$TORCH_WHL \
+        && pip3 install /root/whl/$TORCHVISION_WHL \
         && pip3 install --no-cache-dir -r requirements.txt \
         && rm -rf /root/whl
+
+# Install torch2trt
+# https://github.com/TaikiInoue/torch2trt#option-2---with-plugins-experimental
+RUN set -xe \
+        && git clone -b taikiinoue45 git@github.com:TaikiInoue/torch2trt.git
+        && cd torch2trt
+        && python3 setup.py install --plugins
+        && cd ..
+        && rm -rf torch2trt
+
+ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs
+ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
