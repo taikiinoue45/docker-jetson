@@ -52,7 +52,7 @@ RUN set -xe \
             # https://github.com/NVIDIA-AI-IOT/torch2trt#option-2---with-plugins-experimental
             libprotobuf* \
             protobuf-compiler \
-            ninja-build
+            ninja-build \
             \
         && sudo apt autoremove -y \
         && sudo apt autoclean -y \
