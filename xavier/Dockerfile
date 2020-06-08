@@ -78,10 +78,10 @@ RUN set -xe \
 # Install torch2trt
 # https://github.com/TaikiInoue/torch2trt#option-2---with-plugins-experimental
 RUN set -xe \
-        && git clone -b taikiinoue45 git@github.com:TaikiInoue/torch2trt.git
-        && cd torch2trt
-        && python3 setup.py install --plugins
-        && cd ..
+        && git clone -b taikiinoue45 git@github.com:TaikiInoue/torch2trt.git \
+        && cd torch2trt \
+        && python3 setup.py install --plugins \
+        && cd .. \
         && rm -rf torch2trt
 
 ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs
