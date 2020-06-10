@@ -8,11 +8,6 @@ FROM nvcr.io/nvidia/l4t-base:r32.4.2
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG en_US.UTF-8
 
-ENV CUDA_VERSION 10.2.89
-ENV CUDA_PKG_VERSION 10-2=$CUDA_VERSION-1
-ENV CUDNN_VERSION 7.6.5.32
-ENV NCCL_VERSION 2.5.6
-
 RUN set -xe \
         && apt-get update \
         && apt-get install -y --no-install-recommends \
@@ -54,6 +49,11 @@ RUN set -xe \
             protobuf-compiler \
             ninja-build \
             \
+            # Graph visualization in torch2trt
+            # https://github.com/NVIDIA-AI-IOT/torch2trt/issues/130#issuecomment-545618736
+            graphviz \
+            xdg-utils \
+            \
         && sudo apt autoremove -y \
         && sudo apt autoclean -y \
         && rm -rf /var/lib/apt/lists/*
@@ -78,12 +78,11 @@ RUN set -xe \
 # Install torch2trt
 # https://github.com/TaikiInoue/torch2trt#option-2---with-plugins-experimental
 RUN set -xe \
-        && git clone -b taikiinoue45 https://github.com/TaikiInoue/torch2trt \
+        && git clone https://github.com/NVIDIA-AI-IOT/torch2trt \
         && cd torch2trt \
         && python3 setup.py install --plugins \
         && cd .. \
         && rm -rf torch2trt
 
-ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs
 ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64

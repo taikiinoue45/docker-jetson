@@ -7,3 +7,4 @@ pyyaml
 albumentations
 tensorboard
 tqdm
+graphviz
