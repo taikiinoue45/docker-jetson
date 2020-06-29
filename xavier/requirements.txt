@@ -8,3 +8,4 @@ albumentations
 tensorboard
 tqdm
 graphviz
+watchdog
