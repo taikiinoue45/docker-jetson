@@ -1,0 +1,35 @@
+# Basic apt packages
+cmake
+build-essential
+git
+python3-pip
+python3-dev
+ftp
+
+# for matplotlib
+# https:#matplotlib.org/users/installing.html#build-requirements
+# https:#matplotlib.org/3.1.1/users/installing.html#dependencies
+# https:#stackoverflow.com/questions/60765231/i-installed-matplotlib-via-pip-but-when-i-try-to-import-matplotlib-to-pycharm-i
+# https:#stackoverflow.com/questions/9829175/pip-install-matplotlib-error-with-virtualenv
+python3-tk
+libpng-dev
+libfreetype6-dev
+pkg-config
+
+# for numpy and torch
+# https:#github.com/numpy/numpy/blob/master/site.cfg.example
+libopenblas-dev
+libopenmpi2
+openmpi-bin
+openmpi-common
+gfortran
+
+# for opencv (shapely)
+# https://stackoverflow.com/questions/19742406/could-not-find-library-geos-c-or-load-any-of-its-variants
+libgeos-dev
+
+# for torchvision (pillow)
+# https:#forums.developer.nvidia.com/t/pytorch-for-jetson-nano-version-1-5-0-now-available/72048
+# https:#pillow.readthedocs.io/en/5.1.x/installation.html
+libjpeg-dev
+zlib1g-dev

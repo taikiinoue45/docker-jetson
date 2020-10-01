@@ -1,11 +1,11 @@
 fastprogress
-matplotlib
 numpy
 pandas
 pillow
 pyyaml
-albumentations
 tensorboard
 tqdm
-graphviz
-watchdog
+six==1.15.0
+dvc
+matplotlib
+omegaconf
