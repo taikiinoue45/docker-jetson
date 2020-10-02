@@ -26,20 +26,12 @@ COPY --from=torch-whl /root/whl/$TORCHVISION_WHL /root/whl/$TORCHVISION_WHL
 COPY requirements_pip.txt requirements_pip.txt
 RUN set -xe \
         && python3 -m pip install --upgrade pip \
-        && pip3 install --no-cache-dir wheel setuptools Cython \
+        && pip3 install --no-cache-dir wheel setuptools \
         && pip3 install -v /root/whl/$OPENCV_WHL \
         && pip3 install -v /root/whl/$TORCH_WHL \
         && pip3 install -v /root/whl/$TORCHVISION_WHL \
         && pip3 install --no-cache-dir -v -r requirements_pip.txt \
         && rm -rf /root/whl
-
-RUN set -xe \
-        && git clone https://github.com/nablas-inc/nablasian.git \
-        && cd nablasian \
-        && git checkout 03eda2542ef04847bbe1a0905732602f484fc2d5 \
-        && python3 -m pip install . \
-        && cd .. \
-        && rm -rf nablasian
 
 ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
