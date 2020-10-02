@@ -1,5 +1,5 @@
 docker_build:
-		docker build -t taikiinoue45/jetson:xavier_v1 .
+		docker build -t taikiinoue45/jetson:xavier .
 
 docker_run:
 		docker run --runtime nvidia -it --rm \
