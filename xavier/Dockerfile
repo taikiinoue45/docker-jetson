@@ -8,6 +8,7 @@ FROM nvcr.io/nvidia/l4t-base:r32.4.2
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG en_US.UTF-8
 
+
 COPY requirements_apt.txt requirements_apt.txt
 RUN set -xe \
         && apt-get update \
@@ -16,6 +17,7 @@ RUN set -xe \
         && sudo apt-get autoremove -y \
         && sudo apt-get autoclean -y \
         && rm -rf /var/lib/apt/lists/*
+
 
 ARG OPENCV_WHL=opencv_python_headless-4.3.0+3073e9e-cp36-cp36m-linux_aarch64.whl
 ARG TORCH_WHL=torch-1.7.0-cp36-cp36m-linux_aarch64.whl
@@ -27,11 +29,14 @@ COPY requirements_pip.txt requirements_pip.txt
 RUN set -xe \
         && python3 -m pip install --upgrade pip \
         && pip3 install --no-cache-dir wheel setuptools \
+        # Install order need to be specified
+        # Before installing matplotlib==3.3.2, installing numpy==1.19.2 must be done.
+        && cat requirements_pip.txt | xargs -n 1 -L 1 pip3 install --no-cache-dir -v \
         && pip3 install -v /root/whl/$OPENCV_WHL \
         && pip3 install -v /root/whl/$TORCH_WHL \
         && pip3 install -v /root/whl/$TORCHVISION_WHL \
-        && pip3 install --no-cache-dir -v -r requirements_pip.txt \
         && rm -rf /root/whl
+
 
 ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
