@@ -1,0 +1,31 @@
+name: build
+
+on:
+  push:
+    branches: [torch-1.7.0]
+  pull_request:
+    branches: [torch-1.7.0]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: docker login
+        uses: actions-hub/docker/login@master
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: docker build
+        run: docker build -t taikiinoue45/jetson:torch-1.7.0 .
+
+      - name: docker push
+        uses: actions-hub/docker@master
+        with:
+          args: push taikiinoue45/jetson:torch-1.7.0
+
+      - name: docker rmi
+        run: docker rmi taikiinoue45/jetson:torch-1.7.0
