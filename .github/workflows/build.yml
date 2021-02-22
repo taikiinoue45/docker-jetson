@@ -10,22 +10,25 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: docker login
+      - name: Docker login
         uses: actions-hub/docker/login@master
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: docker build
+      - name: Docker build
         run: docker build -t taikiinoue45/jetson:scikit-image-0.17.2 .
 
-      - name: docker push
+      - name: Docker push
         uses: actions-hub/docker@master
         with:
           args: push taikiinoue45/jetson:scikit-image-0.17.2
 
-      - name: docker rmi
-        run: docker rmi taikiinoue45/jetson:scikit-image-0.17.2
+      - name: Clean up docker containers and images
+        run: |
+          docker stop $(docker ps -q)
+          docker rm $(docker ps -q -a)
+          docker rmi $(docker images -q)
