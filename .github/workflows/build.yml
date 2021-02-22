@@ -1,4 +1,4 @@
-name: scikit-image-0.17.2
+name: build
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [scikit-image-0.17.2]
 
 jobs:
-  scikit-image-0.17.2:
+  build:
     runs-on: self-hosted
     steps:
       - name: checkout
