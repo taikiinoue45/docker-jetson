@@ -2,9 +2,9 @@ name: build
 
 on:
   push:
-    branches: [torch-1.7.0]
+    branches: [scikit-image-0.17.2]
   pull_request:
-    branches: [torch-1.7.0]
+    branches: [scikit-image-0.17.2]
 
 jobs:
   build:
@@ -20,12 +20,12 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: docker build
-        run: docker build -t taikiinoue45/jetson:torch-1.7.0 .
+        run: docker build -t taikiinoue45/jetson:scikit-image-0.17.2 .
 
       - name: docker push
         uses: actions-hub/docker@master
         with:
-          args: push taikiinoue45/jetson:torch-1.7.0
+          args: push taikiinoue45/jetson:scikit-image-0.17.2
 
       - name: docker rmi
-        run: docker rmi taikiinoue45/jetson:torch-1.7.0
+        run: docker rmi taikiinoue45/jetson:scikit-image-0.17.2
