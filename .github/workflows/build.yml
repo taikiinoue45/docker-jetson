@@ -10,22 +10,24 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: docker login
+      - name: Docker login
         uses: actions-hub/docker/login@master
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: docker build
+      - name: Docker build
         run: docker build -t taikiinoue45/jetson:torch-1.7.0 .
 
-      - name: docker push
+      - name: Docker push
         uses: actions-hub/docker@master
         with:
           args: push taikiinoue45/jetson:torch-1.7.0
 
-      - name: docker rmi
-        run: docker rmi taikiinoue45/jetson:torch-1.7.0
+      - name: Clean up
+        run: |
+          docker rmi -f $(docker images -q)
+          docker system prune -af
