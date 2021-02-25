@@ -1,7 +1,13 @@
+FROM taikiinoue45/jetson:torch-1.7.0 as torch-1.7.0
 FROM nvcr.io/nvidia/l4t-base:r32.4.2
-
 ENV DEBIAN_FRONTEND=noninteractive
 
+
+ARG TORCH_WHL=torch-1.7.0-cp36-cp36m-linux_aarch64.whl
+ARG TORCHVISION_WHL=torchvision-0.8.0a0+45f960c-cp36-cp36m-linux_aarch64.whl
+ARG TORCH2TRT_WHL=torch2trt-0.1.0-py3-none-any.whl
+COPY --from=torch-1.7.0 /root/whl/$TORCH_WHL /root/whl/$TORCH_WHL
+COPY --from=torch-1.7.0 /root/whl/$TORCHVISION_WHL /root/whl/$TORCHVISION_WHL
 RUN set -xe \
         && apt-get update \
         && apt-get install -y --no-install-recommends \
@@ -30,24 +36,14 @@ RUN set -xe \
             \
         && rm -rf /var/lib/apt/lists/* \
         && python3 -m pip install --upgrade pip \
-        && pip3 install setuptools Cython wheel
-
-# Download Torch WHL file
-# https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-7-0-now-available/72048
-# v1.7.0 https://nvidia.box.com/shared/static/cs3xn3td6sfgtene6jdvsxlr366m2dhq.whl (torch-1.7.0-cp36-cp36m-linux_aarch64.whl)
-ARG TORCH_URL=https://nvidia.box.com/shared/static/cs3xn3td6sfgtene6jdvsxlr366m2dhq.whl
-ARG TORCH_WHL=torch-1.7.0-cp36-cp36m-linux_aarch64.whl
-RUN set -xe \
-        && mkdir /root/whl \
-        && wget --quiet --show-progress --progress=bar:force:noscroll --no-check-certificate ${TORCH_URL} -O /root/whl/${TORCH_WHL} \
-        && pip3 install /root/whl/${TORCH_WHL}
-
-# Build TorchVision WHL file from souce code
-ARG TORCHVISION_VERSION=v0.8.1
-ARG TORCHVISION_WHL=torchvision-0.8.0a0+45f960c-cp36-cp36m-linux_aarch64.whl
-RUN set -xe \
-        && git clone -b ${TORCHVISION_VERSION} https://github.com/pytorch/vision /root/torchvision \
-        && cd /root/torchvision \
+        && pip3 install --no-cache-dir setuptools Cython wheel \
+        && pip3 install /root/whl/$TORCH_WHL \
+        && pip3 install /root/whl/$TORCHVISION_WHL \
+        && git clone https://github.com/NVIDIA-AI-IOT/torch2trt /root/torch2trt \
+        && cd /root/torch2trt \
+        && git checkout a5bdd2975807e7a4b5ce595229e51f81f6c5a631 \
         && python3 setup.py bdist_wheel \
-        && cp /root/torchvision/dist/${TORCHVISION_WHL} /root/whl/${TORCHVISION_WHL} \
-        && pip3 install /root/whl/${TORCHVISION_WHL}
+        && cp /root/torch2trt/dist/${TORCH2TRT_WHL} /root/whl/${TORCH2TRT_WHL} \
+        && rm -rf /root/torch2trt \
+        && rm /root/whl/${TORCH_WHL} \
+        && rm /root/whl/${TORCHVISION_WHL}
