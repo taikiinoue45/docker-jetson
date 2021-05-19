@@ -2,9 +2,9 @@ name: build
 
 on:
   push:
-    branches: [torch-1.7.0]
+    branches: [torch-1.8.0]
   pull_request:
-    branches: [torch-1.7.0]
+    branches: [torch-1.8.0]
 
 jobs:
   build:
@@ -20,12 +20,12 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: Docker build
-        run: docker build -t taikiinoue45/jetson:torch-1.7.0 .
+        run: docker build -t taikiinoue45/jetson:torch-1.8.0 .
 
       - name: Docker push
         uses: actions-hub/docker@master
         with:
-          args: push taikiinoue45/jetson:torch-1.7.0
+          args: push taikiinoue45/jetson:torch-1.8.0
 
       - name: Clean up
         run: |
