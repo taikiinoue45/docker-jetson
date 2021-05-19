@@ -1,16 +1,16 @@
-# torch-1.7.0
+# torch-1.8.0
 
-[![build](https://github.com/taikiinoue45/docker-jetson/actions/workflows/build.yml/badge.svg?branch=torch-1.7.0)](https://github.com/taikiinoue45/docker-jetson/actions/workflows/build.yml)
+[![build](https://github.com/taikiinoue45/docker-jetson/actions/workflows/build.yml/badge.svg?branch=torch-1.8.0)](https://github.com/taikiinoue45/docker-jetson/actions/workflows/build.yml)
 
 <br>
 
 ## How to Use in Dockerfile
 ```
-FROM taikiinoue45/jetson:torch-1.7.0 as torch-1.7.0
-ARG TORCH_WHL=torch-1.7.0-cp36-cp36m-linux_aarch64.whl
-ARG TORCHVISION_WHL=torchvision-0.8.0a0+45f960c-cp36-cp36m-linux_aarch64.whl
-COPY --from=torch-1.7.0 /root/whl/$TORCH_WHL /root/whl/$TORCH_WHL
-COPY --from=torch-1.7.0 /root/whl/$TORCHVISION_WHL /root/whl/$TORCHVISION_WHL
+FROM taikiinoue45/jetson:torch-1.8.0 as torch-1.8.0
+ARG TORCH_WHL=torch-1.8.0-cp36-cp36m-linux_aarch64.whl
+ARG TORCHVISION_WHL=torchvision-0.9.0a0+01dfa8e-cp36-cp36m-linux_aarch64.whl
+COPY --from=torch-1.8.0 /root/whl/$TORCH_WHL /root/whl/$TORCH_WHL
+COPY --from=torch-1.8.0 /root/whl/$TORCHVISION_WHL /root/whl/$TORCHVISION_WHL
 ```
 
 <br>
