@@ -1,13 +1,13 @@
-FROM taikiinoue45/jetson:torch-1.7.0 as torch-1.7.0
+FROM taikiinoue45/jetson:torch-1.8.0 as torch-1.8.0
 FROM nvcr.io/nvidia/l4t-base:r32.4.2
 ENV DEBIAN_FRONTEND=noninteractive
 
 
-ARG TORCH_WHL=torch-1.7.0-cp36-cp36m-linux_aarch64.whl
-ARG TORCHVISION_WHL=torchvision-0.8.0a0+45f960c-cp36-cp36m-linux_aarch64.whl
-ARG TORCH2TRT_WHL=torch2trt-0.1.0-py3-none-any.whl
-COPY --from=torch-1.7.0 /root/whl/$TORCH_WHL /root/whl/$TORCH_WHL
-COPY --from=torch-1.7.0 /root/whl/$TORCHVISION_WHL /root/whl/$TORCHVISION_WHL
+ARG TORCH_WHL=torch-1.8.0-cp36-cp36m-linux_aarch64.whl
+ARG TORCHVISION_WHL=torchvision-0.9.0a0+01dfa8e-cp36-cp36m-linux_aarch64.whl
+ARG TORCH2TRT_WHL=torch2trt-0.2.0-py3-none-any.whl
+COPY --from=torch-1.8.0 /root/whl/$TORCH_WHL /root/whl/$TORCH_WHL
+COPY --from=torch-1.8.0 /root/whl/$TORCHVISION_WHL /root/whl/$TORCHVISION_WHL
 RUN set -xe \
         && apt-get update \
         && apt-get install -y --no-install-recommends \
@@ -39,9 +39,8 @@ RUN set -xe \
         && pip3 install --no-cache-dir setuptools Cython wheel \
         && pip3 install /root/whl/$TORCH_WHL \
         && pip3 install /root/whl/$TORCHVISION_WHL \
-        && git clone https://github.com/NVIDIA-AI-IOT/torch2trt /root/torch2trt \
+        && git clone -b v0.2.0 https://github.com/NVIDIA-AI-IOT/torch2trt /root/torch2trt \
         && cd /root/torch2trt \
-        && git checkout a5bdd2975807e7a4b5ce595229e51f81f6c5a631 \
         && python3 setup.py bdist_wheel \
         && cp /root/torch2trt/dist/${TORCH2TRT_WHL} /root/whl/${TORCH2TRT_WHL} \
         && rm -rf /root/torch2trt \
