@@ -8,7 +8,7 @@
 ```
 FROM taikiinoue45/jetson:torch-1.8.0 as torch-1.8.0
 ARG TORCH_WHL=torch-1.8.0-cp36-cp36m-linux_aarch64.whl
-ARG TORCHVISION_WHL=torchvision-0.9.0a0+01dfa8e-cp36-cp36m-linux_aarch64.whl
+ARG TORCHVISION_WHL=torchvision-0.9.0-cp36-cp36m-linux_aarch64.whl
 COPY --from=torch-1.8.0 /root/whl/$TORCH_WHL /root/whl/$TORCH_WHL
 COPY --from=torch-1.8.0 /root/whl/$TORCHVISION_WHL /root/whl/$TORCHVISION_WHL
 ```

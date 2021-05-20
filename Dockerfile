@@ -1,7 +1,11 @@
-FROM nvcr.io/nvidia/l4t-base:r32.4.2
+ARG TORCH_URL=https://nvidia.box.com/shared/static/p57jwntv436lfrd78inwl7iml6p13fzh.whl
+ARG TORCH_WHL=torch-1.8.0-cp36-cp36m-linux_aarch64.whl
+ARG TORCHVISION_BRANCH=v0.9.0
+ARG TORCHVISION_WHL=torchvision-0.9.0-cp36-cp36m-linux_aarch64.whl
 
+FROM nvcr.io/nvidia/l4t-base:r32.5.0
 ENV DEBIAN_FRONTEND=noninteractive
-
+WORKDIR /root
 RUN set -xe \
         && apt-get update \
         && apt-get install -y --no-install-recommends \
@@ -34,19 +38,28 @@ RUN set -xe \
 
 # Download Torch WHL file
 # https://forums.developer.nvidia.com/t/pytorch-for-jetson-version-1-8-0-now-available/72048
-ARG TORCH_URL=https://nvidia.box.com/shared/static/p57jwntv436lfrd78inwl7iml6p13fzh.whl
-ARG TORCH_WHL=torch-1.8.0-cp36-cp36m-linux_aarch64.whl
+ARG TORCH_URL
+ARG TORCH_WHL
 RUN set -xe \
         && mkdir /root/whl \
         && wget --quiet --show-progress --progress=bar:force:noscroll --no-check-certificate ${TORCH_URL} -O /root/whl/${TORCH_WHL} \
         && pip3 install /root/whl/${TORCH_WHL}
 
 # Build TorchVision WHL file from souce code
-ARG TORCHVISION_VERSION=v0.9.0
-ARG TORCHVISION_WHL=torchvision-0.9.0a0+01dfa8e-cp36-cp36m-linux_aarch64.whl
+ARG TORCHVISION_WHL
+ARG TORCHVISION_BRANCH
 RUN set -xe \
-        && git clone -b ${TORCHVISION_VERSION} https://github.com/pytorch/vision /root/torchvision \
+        && git clone -b ${TORCHVISION_BRANCH} https://github.com/pytorch/vision /root/torchvision \
         && cd /root/torchvision \
-        && python3 setup.py bdist_wheel \
-        && cp /root/torchvision/dist/${TORCHVISION_WHL} /root/whl/${TORCHVISION_WHL} \
-        && pip3 install /root/whl/${TORCHVISION_WHL}
+        && python3 setup.py bdist_wheel
+        # && cp /root/torchvision/dist/$(basename dist/*.py) /root/whl/${TORCHVISION_WHL} \
+        # && pip3 install /root/whl/${TORCHVISION_WHL}
+
+
+FROM nvcr.io/nvidia/l4t-base:r32.5.0
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /root
+ARG TORCH_WHL
+ARG TORCHVISION_WHL
+COPY --from=0 /root/whl/${TORCH_WHL} /root/whl/${TORCH_WHL}
+COPY --from=0 /root/whl/${TORCHVISION_WHL} /root/whl/${TORCHVISION_WHL}
