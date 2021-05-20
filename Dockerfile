@@ -1,11 +1,13 @@
-FROM taikiinoue45/jetson:torch-1.8.0 as torch-1.8.0
-FROM nvcr.io/nvidia/l4t-base:r32.4.2
+ARG TORCH_WHL=torch-1.8.0-cp36-cp36m-linux_aarch64.whl
+ARG TORCHVISION_WHL=torchvision-0.9.0-cp36-cp36m-linux_aarch64.whl
+ARG TORCH2TRT_BRANCH=v0.2.0
+ARG TORCH2TRT_WHL=torch2trt-0.2.0-py3-none-any.whl
+
+FROM taikiinoue45/jetson:torch-1.8.0 AS torch-1.8.0
+FROM nvcr.io/nvidia/l4t-base:r32.5.0 AS tmp
 ENV DEBIAN_FRONTEND=noninteractive
 
 
-ARG TORCH_WHL=torch-1.8.0-cp36-cp36m-linux_aarch64.whl
-ARG TORCHVISION_WHL=torchvision-0.9.0a0+01dfa8e-cp36-cp36m-linux_aarch64.whl
-ARG TORCH2TRT_WHL=torch2trt-0.2.0-py3-none-any.whl
 COPY --from=torch-1.8.0 /root/whl/$TORCH_WHL /root/whl/$TORCH_WHL
 COPY --from=torch-1.8.0 /root/whl/$TORCHVISION_WHL /root/whl/$TORCHVISION_WHL
 RUN set -xe \
@@ -39,10 +41,15 @@ RUN set -xe \
         && pip3 install --no-cache-dir setuptools Cython wheel \
         && pip3 install /root/whl/$TORCH_WHL \
         && pip3 install /root/whl/$TORCHVISION_WHL \
-        && git clone -b v0.2.0 https://github.com/NVIDIA-AI-IOT/torch2trt /root/torch2trt \
+        && git clone -b $TORCH2TRT_BRANCH https://github.com/NVIDIA-AI-IOT/torch2trt /root/torch2trt \
         && cd /root/torch2trt \
         && python3 setup.py bdist_wheel \
-        && cp /root/torch2trt/dist/${TORCH2TRT_WHL} /root/whl/${TORCH2TRT_WHL} \
-        && rm -rf /root/torch2trt \
-        && rm /root/whl/${TORCH_WHL} \
-        && rm /root/whl/${TORCHVISION_WHL}
+        && cp /root/torch2trt/dist/$(basename dist/*.whl) /root/whl/${TORCH2TRT_WHL} \
+        && pip3 install /root/whl/${TORCH2TRT_WHL}
+
+
+FROM nvcr.io/nvidia/l4t-base:r32.5.0
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /root
+ARG TORCH2TRT_WHL
+COPY --from=tmp /root/whl/${TORCH2TRT_WHL} /root/whl/${TORCH2TRT_WHL}
