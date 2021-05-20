@@ -51,7 +51,7 @@ ARG TORCHVISION_BRANCH
 RUN set -xe \
         && git clone -b ${TORCHVISION_BRANCH} https://github.com/pytorch/vision /root/torchvision \
         && cd /root/torchvision \
-        && python3 setup.py bdist_wheel
+        && python3 setup.py bdist_wheel \
         && cp /root/torchvision/dist/$(basename dist/*.py) /root/whl/${TORCHVISION_WHL} \
         && pip3 install /root/whl/${TORCHVISION_WHL}
 
