@@ -3,7 +3,7 @@ ARG TORCH_WHL=torch-1.8.0-cp36-cp36m-linux_aarch64.whl
 ARG TORCHVISION_BRANCH=v0.9.0
 ARG TORCHVISION_WHL=torchvision-0.9.0-cp36-cp36m-linux_aarch64.whl
 
-FROM nvcr.io/nvidia/l4t-base:r32.5.0
+FROM nvcr.io/nvidia/l4t-base:r32.5.0 AS tmp
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 RUN set -xe \
@@ -52,8 +52,8 @@ RUN set -xe \
         && git clone -b ${TORCHVISION_BRANCH} https://github.com/pytorch/vision /root/torchvision \
         && cd /root/torchvision \
         && python3 setup.py bdist_wheel
-        # && cp /root/torchvision/dist/$(basename dist/*.py) /root/whl/${TORCHVISION_WHL} \
-        # && pip3 install /root/whl/${TORCHVISION_WHL}
+        && cp /root/torchvision/dist/$(basename dist/*.py) /root/whl/${TORCHVISION_WHL} \
+        && pip3 install /root/whl/${TORCHVISION_WHL}
 
 
 FROM nvcr.io/nvidia/l4t-base:r32.5.0
@@ -61,5 +61,5 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 ARG TORCH_WHL
 ARG TORCHVISION_WHL
-COPY --from=0 /root/whl/${TORCH_WHL} /root/whl/${TORCH_WHL}
-COPY --from=0 /root/whl/${TORCHVISION_WHL} /root/whl/${TORCHVISION_WHL}
+COPY --from=tmp /root/whl/${TORCH_WHL} /root/whl/${TORCH_WHL}
+COPY --from=tmp /root/whl/${TORCHVISION_WHL} /root/whl/${TORCHVISION_WHL}
