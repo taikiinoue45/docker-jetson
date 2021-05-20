@@ -6,8 +6,6 @@ ARG TORCH2TRT_WHL=torch2trt-0.2.0-py3-none-any.whl
 FROM taikiinoue45/jetson:torch-1.8.0 AS torch-1.8.0
 FROM nvcr.io/nvidia/l4t-base:r32.5.0 AS tmp
 ENV DEBIAN_FRONTEND=noninteractive
-
-
 COPY --from=torch-1.8.0 /root/whl/$TORCH_WHL /root/whl/$TORCH_WHL
 COPY --from=torch-1.8.0 /root/whl/$TORCHVISION_WHL /root/whl/$TORCHVISION_WHL
 RUN set -xe \
