@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/l4t-base:r32.4.2
+FROM nvcr.io/nvidia/l4t-base:r32.5.0
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG en_US.UTF-8
