@@ -1,9 +1,10 @@
-ARG TORCH_URL=https://nvidia.box.com/shared/static/p57jwntv436lfrd78inwl7iml6p13fzh.whl
-ARG TORCH_WHL=torch-1.8.0-cp36-cp36m-linux_aarch64.whl
-ARG TORCHVISION_BRANCH=v0.9.0
-ARG TORCHVISION_WHL=torchvision-0.9.0-cp36-cp36m-linux_aarch64.whl
+ARG TORCH_URL=https://nvidia.box.com/shared/static/fjtbno0vpo676a25cgvuqc1wty0fkkg6.whl
+ARG TORCH_WHL=torch-1.10.0-cp36-cp36m-linux_aarch64.whl
+ARG TORCHVISION_BRANCH=v0.11.1
+ARG TORCHVISION_WHL=torchvision-0.11.1-cp36-cp36m-manylinux2014_aarch64.whl
 
-FROM nvcr.io/nvidia/l4t-base:r32.5.0 AS tmp
+FROM nvcr.io/nvidia/l4t-base:r32.6.1 AS tmp
+
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 RUN set -xe \
@@ -56,7 +57,7 @@ RUN set -xe \
         && pip3 install /root/whl/${TORCHVISION_WHL}
 
 
-FROM nvcr.io/nvidia/l4t-base:r32.5.0
+FROM nvcr.io/nvidia/l4t-base:r32.6.1
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 ARG TORCH_WHL
